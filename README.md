@@ -1,6 +1,6 @@
 # Sistema de Gestão Empresarial
 
-## Módulos
+## Introdução
 
 Projeto em desenvolvimento que visa criar um sistema de gestão empresarial simples.
 
