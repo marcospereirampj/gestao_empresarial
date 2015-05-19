@@ -1,0 +1,32 @@
+{% extends "template_relatorio.html" %}            
+{% load i18n %}
+
+
+{% block content %}
+<div id="content-main">
+	<div align="center">
+		<h2>RELATÓRIO  - TODOS OS CONTRATOS ATIVOS </h2>
+	</div>
+	
+	<br />
+
+ 	<div class="tabela_relatorio">
+      <table>      	
+          	<thead>                        	
+	            <tr>
+	                <th align="center">TÍTULO: </th>                  
+	            </tr>
+            </thead>
+            <tbody>
+	            {% for contrato in contratos_ativos %}
+	            <tr>
+	            	<td align="center"><b>{{ contrato.titulo }}</b></td> 		
+	            </tr>
+	          {% endfor %}
+			</tbody>
+      </table>
+    </div>
+    
+</div>
+
+{% endblock %}

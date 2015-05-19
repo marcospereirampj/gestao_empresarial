@@ -1,0 +1,44 @@
+<html dir="ltr" xml:lang="pt-br" lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"> 
+
+<head>
+     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /> 
+</head>
+
+
+{% block branding %}
+
+<div id="header-relatorio">
+	<div>
+		<table>
+			<tr>
+				<td width="80%">
+					<h3>
+						SISTEMA DE GESTÃO EMPRESARIAL 
+						<br />
+						{{ titulo }}			
+					</h3>
+				</td>
+				<td width="20%">
+					<img alt="Nome Empresa" src="{{ project_root }}/static/admin/img/logo.jpg">
+				</td>
+			</tr>
+		</table>			
+	</div>
+
+	<hr />
+	<div id="horario_relatorio">Gerado em: {{ data_atual }}</div>	
+</div>
+
+<div id="footer">
+	<hr />
+	<center>
+		NOME EMPRESA - CNPJ: XX.XXX.XXXX/XXXX-XX <br />
+		Maceió - Alagoas - Brasil.
+	</center>
+</div>
+
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}

@@ -1,0 +1,187 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_modify suit_tags admin_urls %}
+{% load url from future %}
+
+{% block extrahead %}{{ block.super }}
+  {% url 'admin:jsi18n' as jsi18nurl %}
+    <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+	<script type="text/javascript" src="/static/admin/js/core.js"></script>
+	<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+	<script type="text/javascript" src="/static/admin/js/calendar.js"></script>
+	<script type="text/javascript" src="/static/admin/js/admin/DateTimeShortcuts.js"></script>
+  {{ media }}
+{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+{% endblock %}
+
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% if not is_popup %}
+  {% block breadcrumbs %}
+    <ul class="breadcrumb">
+      <li>
+        <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+        <span class="divider">&raquo;</span>
+      </li>
+      <li>
+      	<a href="{% url 'detalhes_contrato' contrato.id %}">
+      		Contrato: {{ contrato.codigo }}
+      	</a> 
+      	<span class="divider">&raquo;</span>       
+      </li>
+      <li>
+        <a href="{% url 'despesas_contrato' contrato.id %}">Despesas de Contratos</a>
+        <span class="divider">&raquo;</span>
+      </li>
+	  <li class="active">
+        Adicionar Despesa do Contrato
+      </li>
+    </ul>
+  {% endblock %}
+{% endif %}
+
+{% block content %}
+  <div id="content-main" class="inner-two-columns">
+  	<form method="post" id="pagamentodespesa_form" class="form-horizontal">
+  	{% csrf_token %}
+ 	<div class="inner-right-column">
+	 	<div class="box save-box">
+          	<div class="submit-row clearfix">
+				<button type="submit" class="btn btn-high btn-info" name="_save">Salvar</button>
+				<button type="submit" name="_continue" class=" btn btn-high">Salvar e continuar editando</button>
+				<button type="submit" name="_addanother" class="btn">Salvar e adicionar outro(a)</button>
+			</div>
+        </div>
+        <h4 class="italic-title">Tools</h4>
+		<ul class="box menu-box">
+			<li>
+				<a href="{% url 'admin:contrato_contrato_change' contrato.id %}" class="historylink">Editar Contrato</a>
+			</li>
+		</ul>
+ 	</div>
+	<div class="inner-center-column">
+		<div class="tab-content tab-content-main">
+			<h2>Dados do Contrato</h2>
+			<table class="table-overview">
+				<tbody>
+					<tr>
+						<th>Código</th>
+						<td width="100%">{{ contrato.codigo }}</td>
+					</tr>
+					<tr>
+						<th>Título</th>
+						<td width="100%">{{ contrato.titulo }}</td>
+					</tr>
+					<tr>
+						<th>Cliente</th>
+						<td width="100%">{{ contrato.cliente }}</td>
+					</tr>
+					<tr>
+						<th>Data de Início</th>
+						<td width="100%">R$ {{ contrato.data_inicio }}</td>
+					</tr>
+					<tr>
+						<th>Data Final</th>
+						<td width="100%">R$ {{ contrato.data_final }}</td>
+					</tr>					
+					<tr>
+						<th>Valor Total</th>
+						<td width="100%">R$ {{ contrato.valor_total|floatformat:2 }}</td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>Dados do Faturamento</h2>		
+		    {{ form_despesa.non_field_errors }}
+
+			<fieldset class="module aligned first ">
+				<div class="control-group form-row field-titulo ">
+					<div>
+						<div class="control-label">
+							<label for="id_data_titulo" class="required">Título:</label>
+						</div>
+						<div class="controls">
+							{{ form_despesa.titulo }}
+							{% if form_despesa.titulo.errors %}
+								<span class="help-block">{{ form_despesa.titulo.errors }}</span>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				<div class="control-group form-row field-descricao">
+					<div>
+						<div class="control-label">
+							<label for="id_descricao" class="required">Descrição:</label>
+						</div>
+						<div class="controls">
+							{{ form_despesa.descricao }}
+							{% if form_despesa.descricao.errors %}
+								<span class="help-block">{{ form_despesa.descricao.errors }}</span>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				<div class="control-group form-row field-fornecedor">
+					<div>
+						<div class="control-label">
+							<label for="id_fornecedor" class="required">Fornecedor:</label>
+						</div>
+						<div class="controls">
+							{{ form_despesa.fornecedor }}
+							{% if form_despesa.fornecedor.errors %}
+								<span class="help-block">{{ form_despesa.fornecedor.errors }}</span>
+							{% endif %}
+						</div>
+					</div>
+				</div>	
+				<div class="control-group form-row field-tipo-despesa">
+					<div>
+						<div class="control-label">
+							<label for="id_tipo_despesa" class="required">Tipo de Despesa:</label>
+						</div>
+						<div class="controls">
+							{{ form_despesa.tipo_de_despesa }}
+							{% if form_despesa.tipo_de_despesa.errors %}
+								<span class="help-block">{{ form_despesa.tipo_de_despesa.errors }}</span>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				<div class="control-group form-row field-data-prevista ">
+					<div>
+						<div class="control-label">
+							<label for="id_data_prevista" class="required">Data Prevista de Pagamento:</label>
+						</div>
+						<div class="controls">
+							{{ form_despesa.data_prevista }}
+							{% if form_despesa.data_prevista.errors %}
+								<span class="help-block">{{ form_despesa.data_prevista.errors }}</span>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				<div class="control-group form-row field-valor-total ">
+					<div>
+						<div class="control-label">
+							<label for="id_valor_total" class="required">Valor Total:</label>
+						</div>
+						<div class="controls">
+							{{ form_despesa.valor_total }}
+							{% if form_despesa.valor_total.errors %}
+								<span class="help-block">{{ form_despesa.valor_total.errors }}</span>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</fieldset>
+		</div>
+	</div>
+	</form>
+  </div>
+{% endblock %}
+
+{# Empty centered sidebar as now we use sidebar in content block#}
+{% block sidebar_content %}{% endblock %}

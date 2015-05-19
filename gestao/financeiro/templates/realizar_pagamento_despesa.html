@@ -1,0 +1,127 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_modify suit_tags admin_urls %}
+{% load url from future %}
+
+{% block extrahead %}{{ block.super }}
+  {% url 'admin:jsi18n' as jsi18nurl %}
+    <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+	<script type="text/javascript" src="/static/admin/js/core.js"></script>
+	<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+	<script type="text/javascript" src="/static/admin/js/calendar.js"></script>
+	<script type="text/javascript" src="/static/admin/js/admin/DateTimeShortcuts.js"></script>
+  {{ media }}
+{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+{% endblock %}
+
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% if not is_popup %}
+  {% block breadcrumbs %}
+    <ul class="breadcrumb">
+      <li>
+        <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+        <span class="divider">&raquo;</span>
+      </li>
+      <li>
+        <a href="{% url 'admin:financeiro_despesa_changelist' %}">Despesas</a>
+        <span class="divider">&raquo;</span>
+      </li>
+      <li class="active">
+        Realizar Pagamento de Despesa
+      </li>
+    </ul>
+  {% endblock %}
+{% endif %}
+
+{% block content %}
+  <div id="content-main" class="inner-two-columns">
+  	<form method="post" id="pagamentodespesa_form" class="form-horizontal">
+  	{% csrf_token %}
+ 	<div class="inner-right-column">
+	 	<div class="box save-box">
+          	<div class="submit-row clearfix">
+				<button type="submit" class="btn btn-high btn-info" name="_save">Salvar</button>
+				<button type="submit" name="_continue" class=" btn btn-high">Salvar e continuar editando</button>
+			</div>
+        </div>
+        <h4 class="italic-title">Tools</h4>
+		<ul class="box menu-box">
+			<li>
+				<a href="{% url 'admin:financeiro_despesa_change' pagamento_despesa.despesa.id %}" class="historylink">Voltar para Despesa</a>
+			</li>
+			<li>
+				<a href="{% url 'admin:financeiro_despesa_add' %}" class="historylink">Nova Despesa</a>
+			</li>
+		</ul>
+ 	</div>
+	<div class="inner-center-column">
+		<div class="tab-content tab-content-main">
+			<h2>Dados da Despesa</h2>
+			<table class="table-overview">
+				<tbody>
+					<tr>
+						<th>Título</th>
+						<td width="100%">{{ pagamento_despesa.despesa.titulo }}</td>
+					</tr>
+					<tr>
+						<th>Cliente</th>
+						<td width="100%">{{ pagamento_despesa.despesa.fornecedor }}</td>
+					</tr>
+					<tr>
+						<th>Data Prevista</th>
+						<td width="100%">{{ pagamento_despesa.despesa.data_prevista }}</td>
+					</tr>
+					<tr>
+						<th>Valor Total</th>
+						<td width="100%">R$ {{ pagamento_despesa.despesa.valor_total|floatformat:2 }}</td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>Dados do Pagamento</h2>			
+		    {{ form_pagamento.non_field_errors }}
+
+			<fieldset class="module aligned first ">
+				<div class="control-group form-row field-data ">
+					<div>
+						<div class="control-label">
+							<label for="id_data" class="required">Data de Pagamento:</label>
+						</div>
+						<div class="controls">
+							{{ form_pagamento.data }}
+						</div>
+					</div>
+				</div>
+				<div class="control-group form-row field-valor_total ">
+					<div>
+						<div class="control-label">
+							<label for="id_data" class="required">Valor Total:</label>
+						</div>
+						<div class="controls">
+							{{ form_pagamento.valor_total }}
+						</div>
+					</div>
+				</div>
+				<div class="control-group form-row field-pagamento_realizado ">
+					<div>
+						<div class="control-label">
+							<label for="id_data" class="required">Pagamento Realizado:</label>
+						</div>
+						<div class="controls">
+							{{ form_pagamento.realizado }}
+						</div>
+					</div>
+				</div>
+			</fieldset>
+		</div>
+	</div>
+	</form>
+  </div>
+{% endblock %}
+
+{# Empty centered sidebar as now we use sidebar in content block#}
+{% block sidebar_content %}{% endblock %}

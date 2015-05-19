@@ -1,0 +1,235 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_modify suit_tags admin_urls %}
+{% load url from future %}
+
+{% block extrahead %}{{ block.super }}
+  {% url 'admin:jsi18n' as jsi18nurl %}
+  <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+  {{ media }}
+{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+{% endblock %}
+
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% if not is_popup %}
+  {% block breadcrumbs %}
+    <ul class="breadcrumb">
+      <li>
+        <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+        <span class="divider">&raquo;</span>
+      </li>
+      <li>
+        <a href="{% url 'admin:contrato_contrato_changelist' %}">Contratos</a>
+        <span class="divider">&raquo;</span>
+      </li>
+      <li class="active">
+        Detalhes do Contrato
+      </li>
+    </ul>
+  {% endblock %}
+{% endif %}
+
+{% block content %}
+  <div id="content-main" class="inner-one-columns">
+	<div class="inner-center-column">
+		<div class="module filtered" id="changelist">
+			<div class="toolbar-content clearfix">
+				<div class="object-tools">
+					<a href="{% url 'admin:contrato_contrato_change' contrato.id %}" class="btn btn-success">
+							<i class="icon-edit icon-white"></i> Editar Contrato
+					</a>
+					<a href="{% url 'admin:contrato_contrato_changelist' %}" class="btn btn-inverse">
+							<i class="icon-arrow-left icon-white"></i> Voltar para Listagem
+					</a>
+				</div>	
+			</div>
+		</div>	
+		<div class="tab-content tab-content-main">
+			<h2>Mais Detalhes</h2>
+			<table class="table table-striped table-bordered table-hover table-condensed" >
+				<thead>
+					<tr>
+						<th class="column" scope="col" colspan="4"></th>
+					</tr>
+				</thead>
+				<tbody>
+                    <tr>
+                        <td>
+	                        <a href="{% url 'faturamentos_contrato' contrato.id %}"> 
+	                        	<i class="icon-calendar" style="margin-right:4px;" /></i> Faturamentos
+	                  		</a>
+                        </td>
+                        <td>
+                        	<a href="{% url 'despesas_contrato' contrato.id %}"> 
+                        		<i class="icon-shopping-cart" style="margin-right:4px;"/></i> Despesas
+                  			</a>
+                        </td>
+                        <td>
+                        	<a href="{% url 'equipe_contrato' contrato.id %}">
+                        		<i class="icon-user" style="margin-right:5px;"/></i>Equipe
+                  			</a>
+                        </td>
+                        <td>
+                        	<a href="{% url 'documentos_contrato' contrato.id %}">
+                        		<i class="icon-file" style="margin-right:4px;"/></i>Documentos
+                  			</a>
+                        </td>
+                    </tr>
+				</tbody>
+		    </table>		
+			<h2>Dados do Contrato</h2>
+			<table class="table-overview">
+				<tbody>
+					<tr>
+						<th>Código</th>
+						<td width="100%">{{ contrato.codigo }}</td>
+					</tr>
+					<tr>
+						<th>Título</th>
+						<td width="100%">{{ contrato.titulo }}</td>
+					</tr>
+					<tr>
+						<th>Cliente</th>
+						<td width="100%">{{ contrato.cliente }}</td>
+					</tr>
+					<tr>
+						<th>Data de Início</th>
+						<td width="100%">{{ contrato.data_inicio }}</td>
+					</tr>
+					<tr>
+						<th>Data Final</th>
+						<td width="100%">{{ contrato.data_final }}</td>
+					</tr>					
+					<tr>
+						<th>Valor Total</th>
+						<td width="100%">R$ {{ contrato.valor_total|floatformat:2 }}</td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>Lista de Faturamentos</h2>
+			<table class="table table-striped table-bordered table-hover table-condensed" >
+				<thead>
+					<tr>
+						<th class="column" scope="col">Título</th>
+						<th class="column" scope="col">Data Prevista</th>
+						<th class="column" scope="col">Valor Total</th>
+						<th class="column" scope="col">Paga?</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% if lista_faturamentos %}
+			    	{% for faturamento in lista_faturamentos %}
+						<tr>							
+							<td>{{ faturamento.receita.titulo }}</td>
+							<td>{{ faturamento.receita.data_prevista }}</td>
+							<td>R$ {{ faturamento.receita.valor_total|floatformat:2 }}</td>
+							<td>
+								{% if faturamento.pagamento %}
+									Paga
+								{% else %}
+									Não Paga
+								{% endif %}
+							</td>							
+						</tr>
+			    	{% endfor %}
+            	{% else %}
+                    <tr>
+                        <td colspan="4">Nenhum faturamento cadastrado.</td>
+                    </tr>
+                {% endif %}
+				</tbody>
+		    </table>
+		    
+			<h2>Lista de Despesas</h2>
+			<table class="table table-striped table-bordered table-hover table-condensed" >
+				<thead>
+					<tr>
+						<th class="column" scope="col">Título</th>
+						<th class="column" scope="col">Data Prevista</th>
+						<th class="column" scope="col">Valor Total</th>
+						<th class="column" scope="col">Paga?</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% if lista_despesas %}
+			    	{% for despesa in lista_despesas %}
+						<tr>							
+							<td>{{ despesa.despesa.titulo }}</td>
+							<td>{{ despesa.despesa.data_prevista }}</td>
+							<td>R$ {{ despesa.despesa.valor_total|floatformat:2 }}</td>
+							<td>
+								{% if despesa.pagamento %}
+									Paga
+								{% else %}
+									Não Paga
+								{% endif %}
+							</td>
+						</tr>
+			    	{% endfor %}
+				{% else %}
+                    <tr>
+                        <td colspan="4">Nenhuma despesa cadastrada.</td>
+                    </tr>
+                {% endif %}
+				</tbody>
+		    </table>
+		    
+			<h2>Lista de Documentos</h2>
+			<table class="table table-striped table-bordered table-hover table-condensed" >
+				<thead>
+					<tr>
+						<th class="column" scope="col">Título</th>
+						<th class="column" scope="col">Data Prevista</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% if lista_documentos %}
+			    	{% for documento in lista_documentos %}
+						<tr>							
+							<td>{{ documento.documento.titulo }}</td>
+							<td>{{ documento.documento.tipo_de_documento }}</td>
+						</tr>
+			    	{% endfor %}
+				{% else %}
+                    <tr>
+                        <td colspan="2">Nenhum documento cadastrado.</td>
+                    </tr>
+                {% endif %}
+				</tbody>
+		    </table>
+		    
+			<h2>Equipe</h2>
+			<table class="table table-striped table-bordered table-hover table-condensed" >
+				<thead>
+					<tr>
+						<th class="column" scope="col">Funcionário</th>
+						<th class="column" scope="col">Cargo</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% if equipe %}
+			    	{% for funcionario, cargo in equipe %}
+						<tr>							
+							<td>{{ funcionario.funcionario.nome_completo }}</td>
+							<td>{{ cargo.cargo.nome }}</td>
+						</tr>
+			    	{% endfor %}
+				{% else %}
+                    <tr>
+                        <td colspan="2">Nenhuma despesa cadastrada.</td>
+                    </tr>
+                {% endif %}
+				</tbody>
+		    </table>		    			
+		</div>
+	</div>
+  </div>
+{% endblock %}
+
+{# Empty centered sidebar as now we use sidebar in content block#}
+{% block sidebar_content %}{% endblock %}

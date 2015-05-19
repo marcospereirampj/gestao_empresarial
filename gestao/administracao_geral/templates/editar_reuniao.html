@@ -1,0 +1,160 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_modify suit_tags admin_urls %}
+{% load url from future %}
+
+{% block extrahead %}{{ block.super }}
+  {% url 'admin:jsi18n' as jsi18nurl %}
+    <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+	<script type="text/javascript" src="/static/admin/js/core.js"></script>
+	<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+	<script type="text/javascript" src="/static/admin/js/calendar.js"></script>
+	<script type="text/javascript" src="/static/admin/js/admin/DateTimeShortcuts.js"></script>    
+  {{ media }}
+{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+{% endblock %}
+
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% if not is_popup %}
+  {% block breadcrumbs %}
+    <ul class="breadcrumb">
+      <li>
+        <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+        <span class="divider">&raquo;</span>
+      </li>
+      <li>
+      	<a href="{% url 'reunioes' %}">
+      		Reuniões
+      	</a> 
+      	<span class="divider">&raquo;</span>
+      </li>
+      {% if form_reuniao.instance.id %}
+		  <li>
+	      	<a href="{% url 'detalhes_reuniao' form_reuniao.instance.id %}">
+	      		Reunião: {{ form_reuniao.instance.titulo }}
+	      	</a> 
+	      	<span class="divider">&raquo;</span>
+	      </li>
+	 {%  endif %}
+	  <li class="active">
+        Adicionar Reunião
+      </li>
+    </ul>
+  {% endblock %}
+{% endif %}
+
+{% block content %}
+  <div id="content-main" class="inner-two-columns">
+  	<form method="post" id="pagamentodespesa_form" class="form-horizontal">
+  	{% csrf_token %}
+ 	<div class="inner-right-column">
+	 	<div class="box save-box">
+          	<div class="submit-row clearfix">
+				<button type="submit" class="btn btn-high btn-info" name="_save">Salvar</button>
+				<button type="submit" name="_continue" class=" btn btn-high">Salvar e continuar editando</button>
+				<button type="submit" name="_addanother" class="btn">Salvar e adicionar outro(a)</button>
+			</div>
+        </div>
+ 	</div>
+	<div class="inner-center-column">
+		<div class="tab-content tab-content-main">		
+			<h2>Dados da Reunião</h2>		
+		    {{ form_reuniao.non_field_errors }}
+
+			<fieldset class="module aligned first ">
+				<div class="control-group form-row field-titulo ">
+					<div>
+						<div class="control-label">
+							<label for="id_data_titulo" class="required">Título:</label>
+						</div>
+						<div class="controls">
+							{{ form_reuniao.titulo }}
+							{% if form_reuniao.titulo.errors %}
+								<span class="help-block">{{ form_reuniao.titulo.errors }}</span>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				<div class="control-group form-row field-local">
+					<div>
+						<div class="control-label">
+							<label for="id_local" class="required">Local:</label>
+						</div>
+						<div class="controls">
+							{{ form_reuniao.local }}
+							{% if form_reuniao.local.errors %}
+								<span class="help-block">{{ form_reuniao.local.errors }}</span>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				<div class="control-group form-row field-data_inicial">
+					<div>
+						<div class="control-label">
+							<label for="id_data_inicial" class="required">Início</label>
+						</div>
+						<div class="controls">
+							{{ form_reuniao.data_inicial }}
+							{% if form_reuniao.data_inicial.errors %}
+								<span class="help-block">{{ form_reuniao.data_inicial.errors }}</span>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				<div class="control-group form-row field-encerrada">
+					<div>
+						<div class="control-label">
+							<label for="id_encerrada" class="required">Reunião Encerrada?</label>
+						</div>
+						<div class="controls">
+							{{ form_reuniao.encerrada }}
+							{% if form_reuniao.encerrada.errors %}
+								<span class="help-block">{{ form_reuniao.encerrada.errors }}</span>
+							{% endif %}
+						</div>
+					</div>
+				</div>				
+			</fieldset>
+			{% if form_reuniao.instance.id %}
+				<br />
+				<h2>Mais Detalhes</h2>
+				<table class="table table-striped table-bordered table-hover table-condensed" >
+					<thead>
+						<tr>
+							<th class="column" scope="col" colspan="4"></th>
+						</tr>
+					</thead>
+					<tbody>
+	                    <tr>
+	                        <td>
+		                        <a href="{% url 'editar_participante_externo' form_reuniao.instance.id %}"> 
+		                        	<i class="icon-user" style="margin-right:4px;" /></i> Adicionar Participantes Externo
+		                  		</a>
+	                        </td>
+	                        <td>
+	                        	<a href="{% url 'editar_participante_interno' form_reuniao.instance.id %}">
+	                        		<i class="icon-user" style="margin-right:4px;"/></i> Adicionar Participantes Internos
+	                  			</a>
+	                        </td>
+	                        <td>
+	                        	<a href="#">
+	                        		<i class="icon-file" style="margin-right:5px;"/></i>Adicionar Ata
+	                  			</a>
+	                        </td>
+	                    </tr>
+					</tbody>
+			    </table>	
+			{% endif %}	
+		</div>
+	</div>
+	</form>
+  </div>  
+{% endblock %}
+
+{# Empty centered sidebar as now we use sidebar in content block#}
+{% block sidebar_content %}{% endblock %}

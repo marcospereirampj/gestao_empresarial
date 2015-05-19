@@ -1,0 +1,119 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_modify suit_tags admin_urls %}
+{% load url from future %}
+
+{% block extrahead %}{{ block.super }}
+  {% url 'admin:jsi18n' as jsi18nurl %}
+    <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+	<script type="text/javascript" src="/static/admin/js/core.js"></script>
+	<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+	<script type="text/javascript" src="/static/admin/js/calendar.js"></script>
+	<script type="text/javascript" src="/static/admin/js/admin/DateTimeShortcuts.js"></script>    
+  {{ media }}
+{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+{% endblock %}
+
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% if not is_popup %}
+  {% block breadcrumbs %}
+    <ul class="breadcrumb">
+      <li>
+        <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+        <span class="divider">&raquo;</span>
+      </li>
+      <li>
+      	<a href="{% url 'reunioes' %}">
+      		Reuniões
+      	</a> 
+      	<span class="divider">&raquo;</span>
+      </li>
+	  <li>
+      	<a href="{% url 'detalhes_reuniao' reuniao.id %}">
+      		Reunião: {{ form_reuniao.instance.titulo }}
+      	</a> 
+      	<span class="divider">&raquo;</span>
+      </li>         
+	  <li class="active">
+        Adicionar Item à Ata
+      </li>
+    </ul>
+  {% endblock %}
+{% endif %}
+
+{% block content %}
+  <div id="content-main" class="inner-two-columns">
+  	<form method="post" id="pagamentodespesa_form" class="form-horizontal">
+  	{% csrf_token %}
+ 	<div class="inner-right-column">
+	 	<div class="box save-box">
+          	<div class="submit-row clearfix">
+				<button type="submit" class="btn btn-high btn-info" name="_save">Salvar</button>
+				<button type="submit" name="_continue" class=" btn btn-high">Salvar e continuar editando</button>
+				<button type="submit" name="_addanother" class="btn">Salvar e adicionar outro(a)</button>
+			</div>
+        </div>
+ 	</div>
+	<div class="inner-center-column">
+		<div class="tab-content tab-content-main">		
+			<h2>Dados da Reunião</h2>
+			<table class="table-overview">
+				<tbody>
+					<tr>
+						<th>Título</th>
+						<td width="100%">{{ reuniao.titulo }}</td>
+					</tr>
+					<tr>
+						<th>Data de Início</th>
+						<td width="100%">{{ reuniao.data_inicial }}</td>
+					</tr>
+					<tr>
+						<th>Data Final</th>
+						<td width="100%">
+							{% if reuniao.data_final %}
+								{{ reuniao.data_final }}
+							{% else %}
+								Reunião não encerrada.
+							{% endif %}
+						</td>
+					</tr>					
+					<tr>
+						<th>Local</th>
+						<td width="100%">{{ reuniao.local }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>		
+		<div class="tab-content tab-content-main">		
+			<h2>Inserir Item de Discussão</h2>
+		    {{ form_item_ata.non_field_errors }}
+		    <input type="hidden" name="reuniao" value="{{ reuniao.id }}" />
+
+			<fieldset class="module aligned first ">
+				<div class="control-group form-row field-descricao ">
+					<div>
+						<div class="control-label">
+							<label for="id_descricao" class="required">Descrição:</label>
+						</div>
+						<div class="controls">
+							{{ form_item_ata.descricao }}
+							{% if form_item_ata.descricao.errors %}
+								<span class="help-block">{{ form_item_ata.descricao.errors }}</span>
+							{% endif %}
+						</div>
+					</div>
+				</div>			
+			</fieldset>			
+		</div>
+	</div>
+	</form>
+  </div>  
+{% endblock %}
+
+{# Empty centered sidebar as now we use sidebar in content block#}
+{% block sidebar_content %}{% endblock %}

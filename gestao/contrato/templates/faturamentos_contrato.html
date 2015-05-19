@@ -1,0 +1,141 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_modify suit_tags admin_urls %}
+{% load url from future %}
+
+{% block extrahead %}{{ block.super }}
+  {% url 'admin:jsi18n' as jsi18nurl %}
+  <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+  {{ media }}
+{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+{% endblock %}
+
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% if not is_popup %}
+  {% block breadcrumbs %}
+    <ul class="breadcrumb">
+      <li>
+        <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+        <span class="divider">&raquo;</span>
+      </li>
+      <li>
+        <a href="{% url 'admin:contrato_contrato_changelist' %}">Contratos</a>
+        <span class="divider">&raquo;</span>
+      </li>
+      <li>
+      	<a href="{% url 'detalhes_contrato' contrato.id %}">
+      		Contrato: {{ contrato.codigo }}
+      	</a> 
+      	<span class="divider">&raquo;</span>       
+      </li>      
+      <li class="active">
+        Faturamentos do Contrato
+      </li>
+    </ul>
+  {% endblock %}
+{% endif %}
+
+{% block content %}
+  <div id="content-main">
+	<div class="inner-center-column">
+		<div class="module filtered" id="changelist">
+			<div class="toolbar-content clearfix">
+				<div class="object-tools">
+					<a href="{% url 'editar_faturamento_contrato' contrato.id %}" class="btn btn-success">
+							<i class="icon-plus-sign icon-white"></i> Adicionar Faturamento
+					</a>
+					<a href="{% url 'detalhes_contrato' contrato.id %}" class="btn btn-inverse">
+							<i class="icon-arrow-left icon-white"></i> Voltar para Detalhes
+					</a>					
+				</div>
+			</div>
+			<div class="results">
+		        <table id="result_list" class="table table-striped table-bordered table-hover table-condensed">
+		            <thead>
+		            <tr>
+	                    <th scope="col">
+	                        <div class="text">
+	                        	Título
+	                        </div>
+	                    </th>
+	                    <th scope="col">
+	                        <div class="text">
+	                        	Data Prevista
+	                        </div>
+	                    </th>
+	                    <th scope="col">
+	                        <div class="text">
+	                        	Valor Previsto
+	                        </div>
+	                    </th>
+	                    <th scope="col">
+	                        <div class="text">
+	                        	Valor Pago
+	                        </div>
+	                    </th>                    
+	                    <th scope="col">
+	                        <div class="text">
+	                        	Remover
+	                        </div>
+	                    </th>
+		            </tr>
+		            </thead>
+		            <tbody>
+		            	{% if faturamentos %}
+		            		{% for faturamento, pagamento in faturamentos %}
+								<tr>
+									
+			                        <td>
+			                        	<a href="{% url 'editar_faturamento_contrato' contrato.id faturamento.id %}">
+			                        		{{ faturamento.receita.titulo }}
+			                        	</a>
+			                        </td>
+			                        <td>{{ faturamento.receita.data_prevista }}</td>
+			                        <td>R$ {{ faturamento.receita.valor_total|floatformat:2 }}</td>
+			                        <td>
+				                        {% if pagamento.pagamento %}
+				                        	R$ {{ pagamento.pagamento.valor_total|floatformat:2 }}
+				                        {% else %}
+				                        	Não Faturado.
+				                        {% endif %}
+			                        </td>
+			                        <td>
+			                        	<a href="{% url 'remove_faturamento_contrato' faturamento.id %}">
+			                        		<i class="icon-remove" style="margin-right: 5px;"></i>Remover
+			                        	</a>
+			                        </td>
+			                    </tr>
+							{% endfor %}
+							<tr>
+								<td colspan="2" style="background-color: #efefef; font-weight: bold;">TOTAIS</td>
+		                        <td style="background-color: #efefef;font-weight: bold;">R$ {{ total_a_faturar|floatformat:2 }}</td>
+		                        <td style="background-color: #efefef;font-weight: bold;">R$ {{ total_pago|floatformat:2 }}</td>
+		                        <td style="background-color: #efefef;font-weight: bold;"></td>
+		                    </tr>
+							<tr>
+								<td colspan="2" style="background-color: #efefef; font-weight: bold;">TOTAL RESTANTE</td>
+		                        <td colspan="2" style="background-color: #efefef;font-weight: bold;text-align: center;">
+		                        	R$ {{ total_restante|floatformat:2 }}
+		                        </td>
+		                        <td style="background-color: #efefef;font-weight: bold;"></td>
+		                    </tr>
+		            	{% else %}
+		                    <tr>
+		                        <td colspan="5">Nenhum faturamento cadastrado.</td>
+		                    </tr>
+	                   	{% endif %}
+		            </tbody>
+		        </table>
+		    </div>
+		</div>
+	</div>
+  </div>
+{% endblock %}
+
+{# Empty centered sidebar as now we use sidebar in content block#}
+{% block sidebar_content %}{% endblock %}

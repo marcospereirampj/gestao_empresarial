@@ -1,0 +1,102 @@
+{% extends "template_relatorio.html" %}            
+{% load i18n %}
+
+
+{% block content %}
+<div id="content-main">	
+ 	<div class="tabela_relatorio">
+      <table>      	
+          	<thead>                        	
+	            <tr>
+	                <th align="center" colspan="4">Dados da Reunião</th>                  
+	            </tr>
+            </thead>
+            <tbody>
+	            <tr>
+	            	<td><b><i>Título:</i></b></td>
+	            	<td colspan="3">{{ reuniao.titulo }}</td> 		
+	            </tr>
+	            <tr>
+	            	<td><b><i>Data de Início:</i></b></td>
+	            	<td>{{ reuniao.data_inicial }}</td>
+	            	<td><b><i>Data de Término:</i></b></td>
+	            	{% if reuniao.data_final %}
+	            		<td>{{ reuniao.data_final }}</td>
+	            	{% else %}
+	            		<td>Reunião não encerrada.</td>
+	            	{% endif %}
+	            </tr>
+	            <tr>
+	            	<td><b><i>Local:</i></b></td>
+	            	<td colspan="3">{{ reuniao.local }}</td> 		
+	            </tr>	            
+			</tbody>
+      </table>
+      <br />
+      <table>      	
+          	<thead>                        	
+	            <tr>
+	                <th align="center">Participantes Internos</th>                  
+	            </tr>
+            </thead>
+            <tbody>
+            	{% if lista_participantes_interno %}
+	            	{% for participante in lista_participantes_interno %}
+			            <tr>
+			            	<td>{{ participante.funcionario.nome_completo }} 
+			            		(CPF: {{ participante.funcionario.cpf }})</td> 		
+			            </tr>
+		            {% endfor %}
+				{% else %}
+		            <tr>
+		            	<td>Nenhum participante interno cadastrado.</td> 		
+		            </tr>
+				{% endif %}
+			</tbody>
+      </table>
+      <br />
+      <table>      	
+          	<thead>                        	
+	            <tr>
+	                <th align="center">Participantes Externos</th>                  
+	            </tr>
+            </thead>
+            <tbody>
+            	{% if lista_participantes_externo %}
+	            	{% for participante in lista_participantes_externo %}
+			            <tr>
+			            	<td>{{ participante.nome_completo }} - {{ participante.cargo }} 
+			            		- {{ participante.empresa.nome_de_fantasia }}</td> 		
+			            </tr>
+		            {% endfor %}
+				{% else %}
+		            <tr>
+		            	<td>Nenhum participante interno cadastrado.</td> 		
+		            </tr>
+				{% endif %}
+			</tbody>
+      </table>
+      <br />
+      <table>      	
+          	<thead>                        	
+	            <tr>
+	                <th align="center">Itens de Discussão</th>                  
+	            </tr>
+            </thead>
+            <tbody>
+            	{% if itens_ata %}
+	            	{% for item in itens_ata %}
+			            <tr>
+			            	<td><b>{{ forloop.counter }}. </b>{{ item.descricao }}</td> 		
+			            </tr>
+		            {% endfor %}
+				{% else %}
+		            <tr>
+		            	<td>Nenhum participante interno cadastrado.</td> 		
+		            </tr>
+				{% endif %}
+			</tbody>
+      </table>      
+    </div>
+</div>
+{% endblock %}

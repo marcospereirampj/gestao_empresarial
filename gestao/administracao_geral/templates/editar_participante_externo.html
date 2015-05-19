@@ -1,0 +1,114 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_modify suit_tags admin_urls %}
+{% load url from future %}
+
+{% block extrahead %}{{ block.super }}
+  {% url 'admin:jsi18n' as jsi18nurl %}
+    <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+	<script type="text/javascript" src="/static/admin/js/core.js"></script>
+	<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+	<script type="text/javascript" src="/static/admin/js/calendar.js"></script>
+	<script type="text/javascript" src="/static/admin/js/admin/DateTimeShortcuts.js"></script>    
+  {{ media }}
+{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+{% endblock %}
+
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% if not is_popup %}
+  {% block breadcrumbs %}
+    <ul class="breadcrumb">
+      <li>
+        <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+        <span class="divider">&raquo;</span>
+      </li>
+      <li>
+      	<a href="{% url 'reunioes' %}">
+      		Reuniões
+      	</a> 
+      	<span class="divider">&raquo;</span>       
+      </li>
+	  <li>
+      	<a href="{% url 'detalhes_reuniao' reuniao.id %}">
+      		Reunião: {{ reuniao.titulo }}
+      	</a> 
+      	<span class="divider">&raquo;</span>
+      </li>      
+	  <li class="active">
+        Adicionar Participante Externo
+      </li>
+    </ul>
+  {% endblock %}
+{% endif %}
+
+{% block content %}
+  <div id="content-main" class="inner-two-columns">
+  	<form method="post" id="pagamentodespesa_form" class="form-horizontal">
+  	{% csrf_token %}
+ 	<div class="inner-right-column">
+	 	<div class="box save-box">
+          	<div class="submit-row clearfix">
+				<button type="submit" class="btn btn-high btn-info" name="_save">Salvar</button>
+			</div>
+        </div>
+ 	</div>
+	<div class="inner-center-column">
+		<div class="tab-content tab-content-main">		
+			<h2>Dados do Participante</h2>		
+		    {{ form_participante_externo.non_field_errors }}
+		    <input type="hidden" name="reuniao" value="{{ reuniao.id }}" />
+
+			<fieldset class="module aligned first ">
+				<div class="control-group form-row field-nome_completo ">
+					<div>
+						<div class="control-label">
+							<label for="id_nome_completo" class="required">Nome Completo:</label>
+						</div>
+						<div class="controls">
+							{{ form_participante_externo.nome_completo }}
+							{% if form_participante_externo.nome_completo.errors %}
+								<span class="help-block">{{ form_participante_externo.nome_completo.errors }}</span>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				<div class="control-group form-row field-cargo">
+					<div>
+						<div class="control-label">
+							<label for="id_cargo" class="required">Cargo:</label>
+						</div>
+						<div class="controls">
+							{{ form_participante_externo.cargo }}
+							{% if form_participante_externo.cargo.errors %}
+								<span class="help-block">{{ form_participante_externo.cargo.errors }}</span>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				<div class="control-group form-row field-empresa">
+					<div>
+						<div class="control-label">
+							<label for="id_empresa" class="required">Empresa</label>
+						</div>
+						<div class="controls">
+							{{ form_participante_externo.empresa }}
+							{% if form_participante_externo.empresa.errors %}
+								<span class="help-block">{{ form_participante_externo.empresa.errors }}</span>
+							{% endif %}
+						</div>
+					</div>
+				</div>				
+			</fieldset>
+		</div>
+	</div>
+	</form>
+  </div>  
+{% endblock %}
+
+{# Empty centered sidebar as now we use sidebar in content block#}
+{% block sidebar_content %}{% endblock %}
